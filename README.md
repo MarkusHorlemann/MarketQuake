@@ -1,4 +1,4 @@
-# Project Proposal: Economic Impact of COVID-19 Analysis
+# MarketQuake: Decoding the Pandemic Punch on Global Economy
 
 ## Description of the Problem
 
