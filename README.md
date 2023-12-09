@@ -39,7 +39,7 @@ The results of the analysis will provide insights into stock performance, volati
 
 - **Github Repository:** Code base, version control, collaboration, backup management.
 - **Python (Numpy / Pandas / PySpark / Matplotlib):** Programming logic and statistical analysis.
-- **Google Cloud Platform (GCS, Dataproc):** Large data storage, parallel processing resource management, computation outsourcing.
+- **Google Cloud Platform (GCS, Dataproc, BigQuery):** Large data storage, parallel processing, efficient data querying, resource management, computation outsourcing.
 - **Google Tables, Excel & Microsoft Power BI:** Visualization.
 - **Google Sites:** Project webpage.
 
