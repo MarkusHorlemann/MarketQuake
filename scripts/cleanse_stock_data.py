@@ -3,7 +3,7 @@ total volume for each week, and removing files with missing information for at l
 
 import os
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, weekofyear, avg, sum, to_date, expr
+from pyspark.sql.functions import col, weekofyear, year, avg, sum, to_date
 
 class MissingDataException(Exception):
     pass
@@ -18,7 +18,8 @@ def clean_and_group_by_week(df):
 
     # Calculate weekly average prices
     df = df.withColumn("Week", weekofyear("Date"))
-    df = df.groupBy("Week").agg(
+    df = df.withColumn("Year", year("Date"))
+    df = df.groupBy("Year", "Week").agg(
         sum("Volume").alias("Volume"),
         avg("Low").alias("Low"),
         avg("Open").alias("Open"),
