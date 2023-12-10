@@ -1,6 +1,7 @@
 '''This script cleanses the Stock Market dataset in place by calculating average stock prices and 
 total volume for each week, and removing files with missing information for at least one week.'''
 
+import os
 import subprocess
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, weekofyear, avg, sum, to_date, expr
@@ -27,8 +28,7 @@ def clean_and_group_by_week(df):
         avg("Adjusted Close").alias("Adjusted Close"))
     
     # Check if any column has a null value in any row
-    rows_with_nulls = df.filter(expr("OR(" + ", ".join(f"isNull({col})" for col in df.columns) + ")"))
-    if rows_with_nulls.count() == 0:
+    if df.na.drop().count() == df.count():
         return df
     else:
         raise MissingDataException("DataFrame missing information for at least one week.")
@@ -36,25 +36,19 @@ def clean_and_group_by_week(df):
 # Initialize Spark session
 spark = SparkSession.builder.appName("StockPriceAnalysis").getOrCreate()
 
-# Load data from GCS bucket
+# Load file names from GCS bucket
 dataset_path = "gs://marketquake_data/stock_market_data"
-folders = spark.read.text(f"gsutil ls {dataset_path}/*").select("value").collect()
-print(f"Folders in {dataset_path}: {folders}")
+files = [line.strip() for line in os.popen(f'gsutil ls {dataset_path}/*/*.csv')]
 
-# Overwrite files in each folder with cleansed version or delete them if data is missing
-for folder in folders:
-    files = spark.read.text(f"gsutil ls {dataset_path}/{folder}/*.csv").select("value").collect()
-
-    for file in files:
-        file_path = f"{dataset_path}/{folder}/{file}"
-        df = spark.read.csv(file_path, header=True)
-
-        try:
-            df = clean_and_group_by_week(df)
-            df.write.mode("overwrite").csv(file_path)
-        except MissingDataException:
-            subprocess.run(["gsutil", "rm", file_path])
-            print(f"File {file_path} removed due to missing data.")
+# Overwrite files with cleansed version or delete them if data is missing
+for file in files:
+    df = spark.read.csv(file, header=True)
+    subprocess.run(["gsutil", "rm", file])
+    try:
+        df = clean_and_group_by_week(df)
+        df.write.csv(file)
+    except MissingDataException:
+        print(f"File {file} removed due to missing data.")
 
 # Stop Spark session
 spark.stop()
