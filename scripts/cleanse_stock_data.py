@@ -2,7 +2,6 @@
 total volume for each week, and removing files with missing information for at least one week.'''
 
 import os
-import subprocess
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, weekofyear, avg, sum, to_date, expr
 
@@ -43,12 +42,11 @@ files = [line.strip() for line in os.popen(f'gsutil ls {dataset_path}/*/*.csv')]
 # Overwrite files with cleansed version or delete them if data is missing
 for file in files:
     df = spark.read.csv(file, header=True)
-    subprocess.run(["gsutil", "rm", file])
     try:
         df = clean_and_group_by_week(df)
-        df.write.csv(file)
+        df.write.csv(f"{dataset_path}_clean{file.replace(dataset_path, '')}")
     except MissingDataException:
-        print(f"File {file} removed due to missing data.")
+        print(f"File {file} disregarded due to missing data.")
 
 # Stop Spark session
 spark.stop()
