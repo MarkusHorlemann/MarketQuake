@@ -22,7 +22,7 @@ The results of the analysis will provide insights into stock performance, volati
 ### Stock Market Dataset
 - **Size:** 10.23 GB
 - **Source:** [Kaggle](https://www.kaggle.com/datasets/paultimothymooney/stock-market-data)
-- **Content:** Daily stock market prices for NASDAQ, S&P500, and NYSE listed companies from March 1980 to October 2022 in CSV format. Additionally includes companies from the Forbes Global 2000 ranking. Columns: Date, Volume, High, Low, Closing Price.
+- **Content:** Daily stock market prices for NASDAQ, S&P500, and NYSE listed companies from March 1980 to December 2022 in CSV format. Additionally includes companies from the Forbes Global 2000 ranking. Columns: Date, Volume, High, Low, Closing Price.
 
 ### COVID-19 Global Excess Deaths Dataset
 - **Size:** 10.54 GB
