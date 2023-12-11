@@ -1,5 +1,6 @@
-'''This script merges the Stock Market dataset into 4 Dataframes and cleanses them by calculating average
-prices and total volume for each week, as well as removing files with missing information for at least one week.'''
+'''This script merges the Stock Market dataset into 4 Dataframes for each market and cleanses them by 
+calculating average prices and total volume for each week between January 2020 and December 2022.
+It ignores files with missing information for at least one week.'''
 
 import os
 from pyspark.sql import SparkSession
