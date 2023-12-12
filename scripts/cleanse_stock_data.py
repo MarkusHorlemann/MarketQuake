@@ -3,8 +3,7 @@ calculating average prices and total volume for each week between January 2020 a
 It disregards files with missing information for at least one week.'''
 
 import os, sys
-from functools import reduce
-from pyspark.sql import SparkSession, DataFrame
+from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, weekofyear, year, avg, sum, to_date, lit
 
 class MissingDataException(Exception):
@@ -59,23 +58,24 @@ dataset_path = "gs://marketquake_data/stock_market_data"
 
 # Load file paths from GCS bucket
 files = [line.strip() for line in os.popen(f'gsutil ls {dataset_path}/{folder}/*.csv')]
-dfs = []
+final_df = None
 
-# Cleanse dataframes
+# Cleanse and merge dataframes
 for file_path in files:
     try:
-        dfs.append(clean_and_group_by_week(file_path))
+        df = clean_and_group_by_week(file_path)
+        if final_df is None:
+            final_df = df
+        else:
+            final_df = final_df.union(df)
         print(f"File {file_path} processed.")
     except MissingDataException:
         print(f"File {file_path} disregarded due to missing data.")
 
-# Merge dataframes
-print("Merging data ...")
-final_df = reduce(DataFrame.union, dfs)
-
 # Write to GCS
-print(f"Writing to {dataset_path}_clean/{folder}.csv ...")
-final_df.write.option("header","true").csv(f"{dataset_path}_clean/{folder}.csv")
+write_path = f"{dataset_path}_clean/{folder}.csv"
+print(f"Writing to {write_path} ...")
+final_df.write.option("header","true").csv(write_path)
 
 # Stop Spark session
 spark.stop()
