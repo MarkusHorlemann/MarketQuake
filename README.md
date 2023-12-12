@@ -39,7 +39,7 @@ The results of the analysis will provide insights into stock performance, volati
 
 - **Github Repository:** Code base, version control, collaboration, backup management.
 - **Python (Numpy / Pandas / PySpark / Matplotlib):** Programming logic and statistical analysis.
-- **Google Cloud Platform (GCS, Dataproc):** Large data storage, parallel processing, resource management, computation outsourcing.
+- **Google Cloud Platform (GCS, Dataproc, Monitoring):** Large data storage, parallel processing, resource management, computation outsourcing, performance monitoring.
 - **Google Tables, Excel & Microsoft Power BI:** Visualization.
 - **Google Sites:** Project webpage.
 
@@ -47,7 +47,8 @@ The results of the analysis will provide insights into stock performance, volati
 To replicate our analysis, refer to the following sections for setting up the environment, accessing the datasets, and executing the code.
 
 ### Prerequisites
-TBA (Ensure you have the necessary software and accounts set up, including access to Google Cloud Platform.)
+As a professor, ensure that you are using your UCM Google account to access our ['Marketquake' project](https://console.cloud.google.com/welcome?project=marketquake) on Google Cloud Platform. 
+External users cannot access any resources in the project. If you think you should be granted the permission to view or use the project, please, contant one of the authors.
 
 ### Data Acccess
 TBA
