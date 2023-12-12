@@ -17,7 +17,7 @@ def find_extremes(csv_path):
                               (f.col("year") == 2022) & (f.col("week") <= 50))
 
     # Calculate the average closing price for each stock
-    average_prices = filtered_data.groupBy("name").agg(f.avg("closing_price").alias("avg_closing_price"))
+    average_prices = filtered_data.groupBy("name").agg(f.avg("close").alias("avg_closing_price"))
 
     # Rank stocks based on average closing price
     windowSpec = w.orderBy(f.desc("avg_closing_price"))
@@ -60,11 +60,11 @@ def find_extremes(csv_path):
 
     for stock_name in top_stock_names:
         stock_data = top_stock_pd[top_stock_pd["name"] == stock_name]
-        plt.plot(stock_data["week"], stock_data["closing_price"], label=f"{stock_name} (Top Performing)")
+        plt.plot(stock_data["week"], stock_data["close"], label=f"{stock_name} (Top Performing)")
 
     for stock_name in bottom_stock_names:
         stock_data = bottom_stock_pd[bottom_stock_pd["name"] == stock_name]
-        plt.plot(stock_data["week"], stock_data["closing_price"], label=f"{stock_name} (Bottom Performing)")
+        plt.plot(stock_data["week"], stock_data["close"], label=f"{stock_name} (Bottom Performing)")
 
     plt.xlabel("Week")
     plt.ylabel("Closing Price")
