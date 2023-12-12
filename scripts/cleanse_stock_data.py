@@ -1,12 +1,11 @@
 '''This script merges the Stock Market dataset into 4 Dataframes for each market and cleanses them by 
 calculating average prices and total volume for each week between January 2020 and December 2022.
-It ignores files with missing information for at least one week.'''
+It disregards files with missing information for at least one week.'''
 
 import os, sys
 from functools import reduce
 from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.functions import col, weekofyear, year, avg, sum, to_date, lit
-from pyspark.sql.types import StructType, StructField, StringType, IntegerType, FloatType
 
 class MissingDataException(Exception):
     pass
@@ -53,16 +52,16 @@ folder = sys.argv[1]
 # Initialize Spark session
 spark = SparkSession.builder \
     .appName("StockDataCleansing") \
-    .config("spark.driver.memory", "4g") \
-    .config("spark.executor.memory", "4g") \
+    .config("spark.driver.maxResultSize", "8g") \
+    .config("spark.executor.memory", "8g") \
     .getOrCreate()
 dataset_path = "gs://marketquake_data/stock_market_data"
 
-# Load file names from GCS bucket
+# Load file paths from GCS bucket
 files = [line.strip() for line in os.popen(f'gsutil ls {dataset_path}/{folder}/*.csv')]
 dfs = []
 
-# Cleanse and merge dataframes
+# Cleanse dataframes
 for file_path in files:
     try:
         dfs.append(clean_and_group_by_week(file_path))
@@ -70,8 +69,12 @@ for file_path in files:
     except MissingDataException:
         print(f"File {file_path} disregarded due to missing data.")
 
-# Merge and write to GCS
+# Merge dataframes
+print("Merging data ...")
 final_df = reduce(DataFrame.union, dfs)
+
+# Write to GCS
+print(f"Writing to {dataset_path}_clean/{folder}.csv ...")
 final_df.write.option("header","true").csv(f"{dataset_path}_clean/{folder}.csv")
 
 # Stop Spark session
