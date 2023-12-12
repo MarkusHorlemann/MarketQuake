@@ -38,10 +38,11 @@ To replicate our analysis, refer to the following sections for setting up the en
 As a professor, ensure that you are using your UCM Google account to access our [Marketquake](https://console.cloud.google.com/welcome?project=marketquake) project on Google Cloud Platform. External users cannot access any resources in the project. If you think you should be granted any permission, please, contant one of the authors of this repository.
 
 ### Data Acccess
-You can access the data used for our analysis, proceed to our project's [Google Cloud Storage](https://console.cloud.google.com/storage/browser?project=marketquake).
+To access the data used for our analysis, proceed to our project's [Google Cloud Storage](https://console.cloud.google.com/storage/browser?project=marketquake).
 - **marketquake_data** bucket contains the initial data after the first and the second stage of cleansing.
 - **marketquake_analysis** bucket contains all the intermediate data needed to answer the questions abve.
 - **marketquake_results** bucket contains all the files needed to represent the final results of our study.
+Refer to our project website for details.
 
 ### Running the Code
 TBA
