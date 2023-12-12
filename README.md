@@ -1,6 +1,7 @@
 # MarketQuake: Decoding the Pandemic Punch on Global Economy
 
-Visit our website for more information and better experience!
+---
+**NOTE:** Visit our website for more information and better experience!
 
 ## Description of the Problem
 
