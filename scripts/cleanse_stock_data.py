@@ -3,7 +3,8 @@ calculating average prices and total volume for each week between January 2020 a
 It ignores files with missing information for at least one week.'''
 
 import os, sys
-from pyspark.sql import SparkSession
+from functools import reduce
+from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.functions import col, weekofyear, year, avg, sum, to_date, lit
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, FloatType
 
@@ -70,7 +71,7 @@ for file_path in files:
         print(f"File {file_path} disregarded due to missing data.")
 
 # Merge and write to GCS
-final_df = dfs[0].union(*dfs[1:])
+final_df = reduce(DataFrame.union, dfs)
 final_df.write.option("header","true").csv(f"{dataset_path}_clean/{folder}.csv")
 
 # Stop Spark session
