@@ -1,5 +1,7 @@
 # MarketQuake: Decoding the Pandemic Punch on Global Economy
 
+Visit our website for more information and better experience!
+
 ## Description of the Problem
 
 The unprecedented challenges posed by COVID-19 in recent years highlighted the need for strategic crisis management. For investors and businesses, understanding how financial markets respond to the progression of a pandemic is crucial to assess and manage risk, make predictions for investment decisions and develop long-term plans for the future.
@@ -29,29 +31,17 @@ The results of the analysis will provide insights into stock performance, volati
 - **Source:** [Kaggle](https://www.kaggle.com/datasets/joebeachcapital/covid19-global-excess-deaths-daily-updates)
 - **Content:** Daily Covid-related death numbers in CSV format classified by area (world, region, continent, country), income group, and calculation method. Also provides daily infection numbers by country. Data spans from January 2020 to November 2023.
 
-## Description of the Need for Big Data Processing
-
-1. **Data Volume:** Processing over 20 GB of data distributed over extended periods requires Big Data processing due to its scale.
-2. **Data Variety:** Combining, cleansing, and unifying two differently structured datasets with numerous correlated tables poses a challenge to conventional data processing methods.
-3. **Limited Local Storage:** Utilizing cost-effective Cloud-based solutions is essential for storing the large dataset.
-
-## Description of Needed Tools and Infrastructures
-
-- **Github Repository:** Code base, version control, collaboration, backup management.
-- **Python (Numpy / Pandas / PySpark / Matplotlib):** Programming logic and statistical analysis.
-- **Google Cloud Platform (GCS, Dataproc, Monitoring):** Large data storage, parallel processing, resource management, computation outsourcing, performance monitoring.
-- **Google Tables, Excel & Microsoft Power BI:** Visualization.
-- **Google Sites:** Project webpage.
-
 ## Try it yourself
 To replicate our analysis, refer to the following sections for setting up the environment, accessing the datasets, and executing the code.
 
 ### Prerequisites
-As a professor, ensure that you are using your UCM Google account to access our ['Marketquake' project](https://console.cloud.google.com/welcome?project=marketquake) on Google Cloud Platform. 
-External users cannot access any resources in the project. If you think you should be granted the permission to view or use the project, please, contant one of the authors.
+As a professor, ensure that you are using your UCM Google account to access our [Marketquake](https://console.cloud.google.com/welcome?project=marketquake) project on Google Cloud Platform. External users cannot access any resources in the project. If you think you should be granted any permission, please, contant one of the authors of this repository.
 
 ### Data Acccess
-TBA
+You can access the data used for our analysis, proceed to our project's [Google Cloud Storage](https://console.cloud.google.com/storage/browser?project=marketquake).
+- **marketquake_data** bucket contains the initial data after the first and the second stage of cleansing.
+- **marketquake_analysis** bucket contains all the intermediate data needed to answer the questions abve.
+- **marketquake_results** bucket contains all the files needed to represent the final results of our study.
 
 ### Running the Code
 TBA
