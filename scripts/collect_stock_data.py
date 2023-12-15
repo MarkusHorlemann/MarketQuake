@@ -49,8 +49,8 @@ def data_by_stock(spark, market_name: str, column: str, read_path: str):
 
     print(f'============ Reading and cleansing data for stocks in {market_name}... ============')
 
-    # Load file paths from GCS bucket | gsutil ls
-    files = [line.strip() for line in os.popen(f'ls {read_path}/stock_market_data/{market_name}/*.csv')]
+    # Load file paths from GCS bucket
+    files = [line.strip() for line in os.popen(f'gsutil ls {read_path}/stock_market_data/{market_name}/*.csv')]
 
     # Cleanse and merge dataframes
     final_df = None

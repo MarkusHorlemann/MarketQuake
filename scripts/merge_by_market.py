@@ -10,7 +10,7 @@ def merge_by_market(spark, stock_column, stock_markets, covid_column, covid_area
     processed_dfs = []
 
     # Get Covid data
-    covid_df = merge_corona_by_location(spark, covid_column, covid_area, read_path)
+    covid_df = filter_corona_by_location(spark, covid_column, covid_area, read_path)
 
     for market in stock_markets:
         # Read and cleanse CSVs for market
@@ -32,25 +32,20 @@ def merge_by_market(spark, stock_column, stock_markets, covid_column, covid_area
 
         processed_dfs.append(df)
 
-        # Write market data alone to CSV
-        path_market = f"{write_path}/stock_market_data/CSVs/{market}_{stock_column}.csv"
-        print(f"Writing to {path_market} ...")
-        df.write.csv(path_market, header=True, mode="overwrite")
-
         # Merge with Covid data
         merged_df = df.join(covid_df, ["Year", "Week"])
 
         # Write to CSV file
-        path_merged = f"{write_path}/stocks_covid_merged/CSVs/{market}_{stock_column}_{covid_area[1]}.csv"
-        print(f"Writing to {path_merged} ...")
-        merged_df.write.csv(path_merged, header=True, mode="overwrite")        
+        csv_path = f"{write_path}/CSVs/{market}_{stock_column}_{covid_area[1]}.csv"
+        print(f"Writing to {csv_path} ...")
+        merged_df.write.csv(csv_path, header=True, mode="overwrite")        
 
         print('================================================================================')
     
     return processed_dfs, covid_df
 
 
-def merge_corona_by_location(spark, column, area, read_path):
+def filter_corona_by_location(spark, column, area, read_path):
     '''Filters Covid data by chosen area and groups by Year and Week.'''
     print(f'============ Filtering and grouping Covid data... ============')
     
@@ -63,7 +58,7 @@ def merge_corona_by_location(spark, column, area, read_path):
     df = df.filter(F.col(df.columns[0]) == location)
 
     # Select only the necessary columns
-    df = df.select('date', column)
+    df = df.select(df.columns[0], 'date', column)
 
     # Convert the date string to a date format and extract the week and year
     df = df.withColumn("date", F.to_date(F.col("date"), 'yyyy-MM-dd'))
@@ -72,4 +67,4 @@ def merge_corona_by_location(spark, column, area, read_path):
 
     # Group by 'year' and 'week_of_year' and then aggregate
     print('==============================================================')
-    return df.groupBy("Year", "Week").agg(F.avg(F.col(column)).alias("average_" + column))
+    return df.groupBy(df.columns[0], "Year", "Week").agg(F.avg(F.col(column)).alias("average_" + column))

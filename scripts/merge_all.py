@@ -24,18 +24,13 @@ def merge_stocks_covid(spark, stock_column, stock_markets, covid_column, covid_a
     else:
         stock_df = stock_df.groupBy('Year', 'Week').agg(F.avg(stock_column).alias(f"Average_{stock_column}"))
     
-    # Write market data alone to CSV
-    path_market = f"{write_path}/stock_market_data/CSVs/all_{stock_column}.csv"
-    print(f"Writing to {path_market} ...")
-    stock_df.write.csv(path_market, header=True, mode="overwrite")
-
     # Join Covid and stock market data
     result_df = stock_df.join(covid_df, ["Year", "Week"])
 
     # Write to CSV file
-    path_merged = f"{write_path}/stocks_covid_merged/CSVs/all_{stock_column}_{covid_area[1]}.csv"
-    print(f"Writing to {path_merged} ...")
-    result_df.write.csv(path_merged, header=True, mode="overwrite")    
+    csv_path = f"{write_path}/CSVs/all_{stock_column}_{covid_area[1]}.csv"
+    print(f"Writing to {csv_path} ...")
+    result_df.write.csv(csv_path, header=True, mode="overwrite")    
 
     print('====================================================================')
     return result_df
