@@ -16,7 +16,7 @@ def get_user_choice(options, prompt):
 def select_stock_data():
     '''Lets the user choose the stock markets to analyze and the metric (column) to analyze them with.'''
     # Provide options for user choice
-    stock_market_options = ['forbes2000', 'nasdaq', 'nyse', 'sp500']
+    stock_market_options = ['sp500', 'forbes2000', 'nyse', 'nasdaq']
     stock_column_options = ['Volume', 'Low', 'High', 'Open', 'Close', 'Adjusted Close']
 
     # Choose number of stock markets

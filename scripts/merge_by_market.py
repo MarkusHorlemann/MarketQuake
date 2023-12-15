@@ -4,10 +4,9 @@ from collect_stock_data import data_by_stock
 
 def merge_by_market(spark, stock_column, stock_markets, covid_column, covid_area, sector, read_path, write_path):
     '''Groups DataFrames for each stock market by Year and Week calculating the average value for stock_column.
-    Also merges with Covid data and saves resulting plots in GCS. Returns the list of merged market DataFrames
-    and the Covid DataFrame.'''
+    Then merges with Covid data and returns the list of merged DataFrames.'''
     # Initialize an empty list for grouped DataFrames
-    processed_dfs = []
+    merged_dfs = []
 
     # Get Covid data
     covid_df = filter_corona_by_location(spark, covid_column, covid_area, read_path)
@@ -30,19 +29,18 @@ def merge_by_market(spark, stock_column, stock_markets, covid_column, covid_area
         else:
             df = df.groupBy('Market', 'Year', 'Week').agg(F.avg(stock_column).alias(f"Average_{stock_column}"))
 
-        processed_dfs.append(df)
-
         # Merge with Covid data
-        merged_df = df.join(covid_df, ["Year", "Week"])
+        df = df.join(covid_df, ["Year", "Week"])
+        merged_dfs.append(df)
 
         # Write to CSV file
         csv_path = f"{write_path}/CSVs/{market}_{stock_column}_{covid_area[1]}.csv"
         print(f"Writing to {csv_path} ...")
-        merged_df.write.csv(csv_path, header=True, mode="overwrite")        
+        df.write.csv(csv_path, header=True, mode="overwrite")        
 
         print('================================================================================')
     
-    return processed_dfs, covid_df
+    return merged_dfs
 
 
 def filter_corona_by_location(spark, column, area, read_path):

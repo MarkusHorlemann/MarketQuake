@@ -2,13 +2,13 @@ import sys
 from pyspark.sql import SparkSession
 from merge_all import merge_stocks_covid
 
-READ = "../marketquake_data" # "gs://marketquake_data"
-WRITE = "../marketquake_results" # "gs://marketquake_results"
+READ = "gs://marketquake_data"
+WRITE = "gs://marketquake_results"
 
 # Assign argumetns
 stock_column = sys.argv[1]
 if sys.argv[2] == 'all':
-    stock_markets = ['forbes2000', 'nasdaq', 'nyse', 'sp500']
+    stock_markets = ['sp500', 'forbes2000', 'nyse', 'nasdaq']
 else:
     stock_markets = [sys.argv[2]]
 covid_column = sys.argv[3]
@@ -23,6 +23,9 @@ print("=========================================================================
 # Initialize Spark session
 spark = SparkSession.builder\
     .appName("MarketQuakeAnalysis")\
+    .config("spark.driver.memory", "10g") \
+    .config("spark.driver.maxResultSize", "5g") \
+    .config("spark.executor.memory", "6g") \
     .getOrCreate()
 spark.sparkContext.setLogLevel("WARN")
 
