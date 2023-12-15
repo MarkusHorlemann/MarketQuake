@@ -20,9 +20,7 @@ def select_stock_data():
     stock_column_options = ['Volume', 'Low', 'High', 'Open', 'Close', 'Adjusted Close']
 
     # Choose number of stock markets
-    stock_market_num = 0
-    while stock_market_num != 1 and stock_market_num != 4:
-        stock_market_num = get_user_choice(['one individual', 'all'],
+    stock_market_num = get_user_choice(['one individual', 'all'],
             "Enter how many stock markets you want to analyze.\nTo analyze all, each of them has to have already been processed individually: ")
 
     # Choose stock markets and metric

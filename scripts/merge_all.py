@@ -6,12 +6,10 @@ def merge_stocks_covid(spark, stock_column, stock_markets, covid_column, covid_a
     '''Reads and merges Covid and stock market data in chosen markets altogether.'''
     print('============ Merging all Covid and stock market data... ============')
 
-    # Define read path
-    read_path = f"{bucket_path}/CSVs/{market}_{stock_column}_{covid_area[1]}.csv"
-
     # Read and merge all intermediate CSV files
     result_df = None
     for market in stock_markets:
+        read_path = f"{bucket_path}/CSVs/{market}_{stock_column}_{covid_area[1]}.csv"
         df = spark.read.csv(read_path, header=True, inferSchema=True)
         result_df = df if result_df is None else result_df.unionAll(df)
     
