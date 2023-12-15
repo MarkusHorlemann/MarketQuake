@@ -1,6 +1,6 @@
 import sys
 from pyspark.sql import SparkSession
-from merge_with_covid import merge_stocks_and_covid
+from merge_all import merge_stocks_covid
 
 READ = "../marketquake_data" # "gs://marketquake_data"
 WRITE = "../marketquake_results" # "gs://marketquake_results"
@@ -16,25 +16,24 @@ covid_area = (sys.argv[4], sys.argv[5])
 sector = sys.argv[6]
 
 # Print arguments
-print("=================================================")
+print("========================================================================================")
 print(f"Received arguments: stock_column={stock_column}, stock_markets={stock_markets}, covid_column={covid_column}, covid_area={covid_area}, sector={sector}")
-print("=================================================")
+print("========================================================================================")
 
 # Initialize Spark session
 spark = SparkSession.builder\
     .appName("MarketQuakeAnalysis")\
-    .config("spark.driver.memory", "8g")\
     .getOrCreate()
 spark.sparkContext.setLogLevel("WARN")
 
 # Start the analysis
-result_df = merge_stocks_and_covid(spark,
-                                   stock_column,
-                                   stock_markets,
-                                   covid_column,
-                                   covid_area,
-                                   sector,
-                                   READ,
-                                   WRITE)
-result_df.show(result_df.count())
+merge_stocks_covid(spark, 
+                   stock_column,
+                   stock_markets, 
+                   covid_column,
+                   covid_area, 
+                   sector, 
+                   READ, 
+                   WRITE)
+
 spark.stop()

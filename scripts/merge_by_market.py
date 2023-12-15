@@ -1,7 +1,6 @@
 # ================================== STEP 2 ==================================
 from pyspark.sql import functions as F
-from merge_by_stock import merge_by_stock
-from plot import plot_market, plot_stocks_corona
+from collect_stock_data import data_by_stock
 
 def merge_by_market(spark, stock_column, stock_markets, covid_column, covid_area, sector, read_path, write_path):
     '''Groups DataFrames for each stock market by Year and Week calculating the average value for stock_column.
@@ -15,7 +14,7 @@ def merge_by_market(spark, stock_column, stock_markets, covid_column, covid_area
 
     for market in stock_markets:
         # Read and cleanse CSVs for market
-        df = merge_by_stock(spark, market, stock_column, read_path)
+        df = data_by_stock(spark, market, stock_column, read_path)
 
         print(f'============ Filtering and merging stock market data for {market}... ============')
 
@@ -33,14 +32,18 @@ def merge_by_market(spark, stock_column, stock_markets, covid_column, covid_area
 
         processed_dfs.append(df)
 
-        # Plot market data alone
-        plot_path_market = f"{write_path}/stock_market_data/plots/{market}_{stock_column}.png"
-        plot_market(df, stock_column, market, plot_path_market)
+        # Write market data alone to CSV
+        path_market = f"{write_path}/stock_market_data/CSVs/{market}_{stock_column}.csv"
+        print(f"Writing to {path_market} ...")
+        df.write.csv(path_market, header=True, mode="overwrite")
 
-        # Plot with Covid data
+        # Merge with Covid data
         merged_df = df.join(covid_df, ["Year", "Week"])
-        plot_path_covid = f"{write_path}/stocks_covid_merged/plots/{market}_{stock_column}_{covid_area[1]}.png"
-        plot_stocks_corona(merged_df, stock_column, market, covid_column, covid_area[1], plot_path_covid)
+
+        # Write to CSV file
+        path_merged = f"{write_path}/stocks_covid_merged/CSVs/{market}_{stock_column}_{covid_area[1]}.csv"
+        print(f"Writing to {path_merged} ...")
+        merged_df.write.csv(path_merged, header=True, mode="overwrite")        
 
         print('================================================================================')
     

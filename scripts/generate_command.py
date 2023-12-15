@@ -75,5 +75,5 @@ sector = get_user_choice(sector_options, "Choose the economy sector (or 'None' i
 # Choose Covid area and metric
 covid_area, covid_column = select_covid_data()
 
-command = f"spark-submit main.py {stock_column} {stock_market} {covid_column} {covid_area[0]} {covid_area[1]} {sector} --py-files plot.py merge_by_stock.py merge_by_market.py merge_with_covid.py"
+command = f"spark-submit main.py {stock_column} {stock_market} {covid_column} {covid_area[0]} {covid_area[1]} {sector} --py-files collect_stock_data.py merge_by_market.py merge_all.py"
 print(f"Your PySpark command is:\n{command}")

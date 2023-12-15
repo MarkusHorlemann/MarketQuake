@@ -22,7 +22,10 @@ def plot_market(df, column, market, plot_file_path):
     plt.figure(figsize=(14, 7))
     plt.plot(pandas_df['Date'], pandas_df[column], marker='o')
 
-    plt.title(f"Plot for {market}")
+    if market is None:
+        plt.title("Plot for all markets.")
+    else:
+        plt.title(f"Plot for {market}")
     plt.xlabel('Date')
     plt.ylabel('Data Value')
     plt.grid(True)
@@ -75,5 +78,4 @@ def plot_stocks_corona(df, stock_column, market, covid_column, location, plot_fi
     plt.grid(True)
 
     # Save the plot as an image file
-    print(f"Writing to {plot_file_path} ...")
     fig.savefig(plot_file_path)
