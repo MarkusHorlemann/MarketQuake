@@ -20,7 +20,7 @@ def merge_by_market(spark, stock_column, stock_markets, covid_column, covid_area
         print(f'============ Filtering and merging stock market data for {market}... ============')
 
         # Filter by sector
-        if sector != "No specific sector":
+        if sector != "None":
             sector_df = spark.read.csv(f"{read_path}/stock_market_data/CategorisedStocks.csv", header=True, inferSchema=True)
             sector_df = sector_df.filter(sector_df.Sector == sector).select("Company")
             df = df.join(sector_df, df['Name'] == sector_df['Company'])
@@ -40,13 +40,17 @@ def merge_by_market(spark, stock_column, stock_markets, covid_column, covid_area
         # Plot with Covid data
         merged_df = df.join(covid_df, ["Year", "Week"])
         plot_path_covid = f"{write_path}/stocks_covid_merged/plots/{market}_{stock_column}_{covid_area[1]}.png"
-        plot_stocks_corona(merged_df, stock_column, covid_column, market, plot_path_covid)
+        plot_stocks_corona(merged_df, stock_column, market, covid_column, covid_area[1], plot_path_covid)
+
+        print('================================================================================')
     
     return processed_dfs, covid_df
 
 
 def merge_corona_by_location(spark, column, area, read_path):
     '''Filters Covid data by chosen area and groups by Year and Week.'''
+    print(f'============ Filtering and grouping Covid data... ============')
+    
     # Read the CSV file into a DataFrame with header and schema inferred
     division = area[0]
     location = area[1]
@@ -64,4 +68,5 @@ def merge_corona_by_location(spark, column, area, read_path):
     df = df.withColumn("Year", F.year(F.col("date")))
 
     # Group by 'year' and 'week_of_year' and then aggregate
+    print('==============================================================')
     return df.groupBy("Year", "Week").agg(F.avg(F.col(column)).alias("average_" + column))

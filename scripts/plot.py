@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 
 def plot_market(df, column, market, plot_file_path):
     '''Plots the development of chosen column for particular stock market.'''
+    print(f"Plotting {column} column in {market} ...")
+
     # Convert PySpark DataFrame to Pandas DataFrame
     pandas_df = df.toPandas()
 
@@ -32,8 +34,10 @@ def plot_market(df, column, market, plot_file_path):
     plt.savefig(plot_file_path)
 
 
-def plot_stocks_corona(df, stock_column, covid_column, market, plot_file_path):
+def plot_stocks_corona(df, stock_column, market, covid_column, location, plot_file_path):
     '''Plots the stock market development with COVID death tolls.'''
+    print(f"Plotting {stock_column} column in {market} and {covid_column} in {location}...")
+
     # Convert PySpark DataFrame to Pandas DataFrame
     pandas_df = df.toPandas()
 
