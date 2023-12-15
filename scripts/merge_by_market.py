@@ -5,42 +5,37 @@ from collect_stock_data import data_by_stock
 def merge_by_market(spark, stock_column, stock_markets, covid_column, covid_area, sector, read_path, write_path):
     '''Groups DataFrames for each stock market by Year and Week calculating the average value for stock_column.
     Then merges with Covid data and returns the list of merged DataFrames.'''
-    # Initialize an empty list for grouped DataFrames
-    merged_dfs = []
+    market = stock_markets[0]
 
     # Get Covid data
     covid_df = filter_corona_by_location(spark, covid_column, covid_area, read_path)
 
-    for market in stock_markets:
-        # Read and cleanse CSVs for market
-        df = data_by_stock(spark, market, stock_column, read_path)
+    # Read and cleanse CSVs for market
+    df = data_by_stock(spark, market, stock_column, read_path)
 
-        print(f'============ Filtering and merging stock market data for {market}... ============')
+    print(f'============ Filtering and merging stock market data for {market}... ============')
 
-        # Filter by sector
-        if sector != "None":
-            sector_df = spark.read.csv(f"{read_path}/stock_market_data/CategorisedStocks.csv", header=True, inferSchema=True)
-            sector_df = sector_df.filter(sector_df.Sector == sector).select("Company")
-            df = df.join(sector_df, df['Name'] == sector_df['Company'])
+    # Filter by sector
+    if sector != "None":
+        sector_df = spark.read.csv(f"{read_path}/stock_market_data/CategorisedStocks.csv", header=True, inferSchema=True)
+        sector_df = sector_df.filter(sector_df.Sector == sector).select("Company")
+        df = df.join(sector_df, df['Name'] == sector_df['Company'])
 
-        # Group price/volume by 'Market', 'Year' and 'Week'
-        if stock_column == 'Volume':
-            df = df.groupBy('Market', 'Year', 'Week').agg(F.sum(stock_column).alias(f"Total_{stock_column}"))
-        else:
-            df = df.groupBy('Market', 'Year', 'Week').agg(F.avg(stock_column).alias(f"Average_{stock_column}"))
+    # Group price/volume by 'Market', 'Year' and 'Week'
+    if stock_column == 'Volume':
+        df = df.groupBy('Market', 'Year', 'Week').agg(F.sum(stock_column).alias(f"Total_{stock_column}"))
+    else:
+        df = df.groupBy('Market', 'Year', 'Week').agg(F.avg(stock_column).alias(f"Average_{stock_column}"))
 
-        # Merge with Covid data
-        df = df.join(covid_df, ["Year", "Week"])
-        merged_dfs.append(df)
+    # Merge with Covid data
+    df = df.join(covid_df, ["Year", "Week"])
 
-        # Write to CSV file
-        csv_path = f"{write_path}/CSVs/{market}_{stock_column}_{covid_area[1]}.csv"
-        print(f"Writing to {csv_path} ...")
-        df.write.csv(csv_path, header=True, mode="overwrite")        
+    # Write to CSV file
+    csv_path = f"{write_path}/CSVs/{market}_{stock_column}_{covid_area[1]}.csv"
+    print(f"Writing to {csv_path} ...")
+    df.write.csv(csv_path, header=True, mode="overwrite")        
 
-        print('================================================================================')
-    
-    return merged_dfs
+    print('================================================================================')
 
 
 def filter_corona_by_location(spark, column, area, read_path):

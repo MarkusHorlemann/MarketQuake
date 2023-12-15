@@ -22,10 +22,11 @@ def select_stock_data():
     # Choose number of stock markets
     stock_market_num = 0
     while stock_market_num != 1 and stock_market_num != 4:
-        stock_market_num = int(input("Enter the number of stock markets for the analysis (1 or 4): "))
+        stock_market_num = get_user_choice(['one individual', 'all'],
+            "Enter how many stock markets you want to analyze.\nTo analyze all, each of them has to have already been processed individually: ")
 
     # Choose stock markets and metric
-    if stock_market_num == 4:
+    if stock_market_num == 'all':
         stock_market = 'all'
     else:
         stock_market = get_user_choice(stock_market_options, f"Enter the name of the stock market: ")
