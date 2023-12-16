@@ -1,5 +1,4 @@
-'''Corrects "Adjusted Close" column and adds the file 
-name as the final column for each file in given market.'''
+'''Corrects "Adjusted Close" column and adds the file name as the final column for each file in given market.'''
 
 import sys, os
 from google.cloud import storage
