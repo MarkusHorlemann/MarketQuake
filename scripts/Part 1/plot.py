@@ -1,4 +1,4 @@
-import os
+import sys, os
 import pandas as pd
 import matplotlib.pyplot as plt
 from google.cloud import storage
@@ -79,32 +79,24 @@ def plot_stocks_corona(df, stock_column, covid_column, write_path):
     blob.upload_from_filename('plot.png')
 
 
-# Load CSV folder names
-csv_folders = [line.strip() for line in os.popen(f'gsutil ls {RESULTS}/CSVs/')]
-for folder in csv_folders:
-    # Parse user input in folder names
-    folder = folder.replace(f'{RESULTS}/CSVs/', '')
-    if folder == '':
-        continue
-    parse = folder.replace('.csv/', '')
+# Assign argumetns
+stock_column = sys.argv[1]
+if sys.argv[2] == 'all':
+    stock_markets = ['sp500', 'forbes2000', 'nyse', 'nasdaq', 'all']
+else:
+    stock_markets = [sys.argv[2]]
+covid_column = sys.argv[3]
+location = sys.argv[4]
 
-    market = parse[:parse.find('_')]
-    parse = parse[parse.find('_')+1:]
-
-    stock_column = parse[:parse.find('_')]
-    parse = parse[parse.find('_')+1:]
-
-    location = parse[:parse.find('_')]
-    covid_column = parse[parse.find('_')+1:]
+for market in stock_markets:
+    # Define read path and read CSV
+    read_path = f"{RESULTS}/CSVs/{market}_{stock_column}_{location}_{covid_column}.csv"
+    print(f"Reading from {read_path} ...")
+    df = pd.read_csv(list(os.popen(f'gsutil ls {read_path}/*.csv'))[0])
 
     # Define write paths
     market_path = f"Plots/{market}_{stock_column}.png"
     covid_path = f"{market_path.replace('.png', '')}_{location}_{covid_column}.png"
-
-    # Define read path and read CSV
-    read_path = list(os.popen(f'gsutil ls {RESULTS}/CSVs/{folder}*.csv'))[0]
-    print(f"Reading from {RESULTS}/CSVs/{folder} ...")
-    df = pd.read_csv(read_path)
 
     # Plot DataFrame
     plot_market(df, stock_column, market_path)

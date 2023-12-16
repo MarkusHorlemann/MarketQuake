@@ -73,5 +73,10 @@ stock_market, stock_column = select_stock_data()
 # Choose Covid area and metric
 covid_area, covid_column = select_covid_data()
 
+# Generate PySpark command
 command = f"spark-submit main.py {stock_column} {stock_market} {covid_column} {covid_area[0]} {covid_area[1]} --py-files merge_by_market.py merge_all.py"
-print(f"Your PySpark command is:\n{command}")
+print(f"\nYour PySpark command is:\n{command}")
+
+# Generate plotting command
+command = f"python plot.py {stock_column} {stock_market} {covid_column} {covid_area[1]}"
+print(f"\nYour plotting command is:\n{command}")
