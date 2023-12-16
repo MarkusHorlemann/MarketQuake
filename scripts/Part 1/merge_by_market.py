@@ -11,10 +11,6 @@ def process_stocks(spark, column, market_name, read_path):
     # Only select necessary columns
     df = df.select('Date', column)
 
-    # Correct Adjusted Close column
-    if column == 'Adjusted Close':
-        df = df.withColumn("AdjustedClose", F.col("Adjusted Close'"))
-
     # Convert Date string to PySpark date type
     df = df.withColumn("Date", F.to_date(F.col("Date"), "dd-MM-yyy"))
 
