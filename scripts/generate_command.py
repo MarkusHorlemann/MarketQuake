@@ -38,7 +38,7 @@ def select_covid_data():
     # Provide options for user choice
     covid_area_options = ['world', 'regions', 'country']
     covid_region_options = ['Americas', 'Europe', 'Asia', 'Africa', 'Oceania']
-    covid_column_options = ['daily_covid_deaths'] #, 'daily_covid_cases'
+    covid_column_options = ['daily_covid_deaths', 'daily_covid_cases']
 
     # Choose area division
     location = get_user_choice(covid_area_options, "Choose the area division for COVID data: ")

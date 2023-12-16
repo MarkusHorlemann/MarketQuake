@@ -2,8 +2,8 @@ import sys
 from pyspark.sql import SparkSession
 from merge_all import merge_stocks_covid
 
-READ = "gs://marketquake_data"
-WRITE = "gs://marketquake_results"
+DATA = "gs://marketquake_data"
+RESULTS = "gs://marketquake_results"
 
 # Assign argumetns
 stock_column = sys.argv[1]
@@ -24,6 +24,6 @@ spark = SparkSession.builder.appName("MarketQuakeAnalysis").getOrCreate()
 spark.sparkContext.setLogLevel("WARN")
 
 # Start the analysis
-merge_stocks_covid(spark, stock_column, stock_markets, covid_column, covid_area, READ, WRITE)
+merge_stocks_covid(spark, stock_column, stock_markets, covid_column, covid_area, DATA, RESULTS)
 
 spark.stop()

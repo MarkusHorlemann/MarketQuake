@@ -11,6 +11,10 @@ def process_stocks(spark, column, market_name, read_path):
     # Only select necessary columns
     df = df.select('Date', column)
 
+    # Correct Adjusted Close column
+    if column == 'Adjusted Close':
+        df = df.withColumn("AdjustedClose", F.col("Adjusted Close'"))
+
     # Convert Date string to PySpark date type
     df = df.withColumn("Date", F.to_date(F.col("Date"), "dd-MM-yyy"))
 
@@ -32,7 +36,7 @@ def process_stocks(spark, column, market_name, read_path):
     return df.na.drop()
 
 
-def merge_by_market(spark, stock_column, stock_market, covid_df, location, read_path, write_path):
+def merge_by_market(spark, stock_column, stock_market, covid_df, read_path, write_path_final):
     '''Groups DataFrames for given stock market by Year and Week calculating the average value for stock_column.
     Then merges with Covid data and returns the merged DataFrame.'''
 
@@ -43,9 +47,8 @@ def merge_by_market(spark, stock_column, stock_market, covid_df, location, read_
     df = stock_df.join(covid_df, ["Year", "Week"])
 
     # Write to CSV file
-    csv_path = f"{write_path}/CSVs/{stock_market}_{stock_column}_{location}.csv"
-    print(f'Writing to {csv_path} ...')
-    df.write.csv(csv_path, header=True, mode="overwrite")     
+    print(f'Writing to {write_path_final} ...')
+    df.write.csv(write_path_final, header=True, mode="overwrite")     
 
     return df
 

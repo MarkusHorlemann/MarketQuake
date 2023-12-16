@@ -30,14 +30,18 @@ def merge_stocks_covid(spark, stock_column, stock_markets, covid_column, covid_a
     '''Reads and merges Covid and stock market data in chosen markets altogether.'''
     print("========================================================================================")
 
+    # Define path to write CSVs
+    csv_path = f"{write_path}/CSVs/all_{stock_column}_{covid_area[1]}_{covid_column}.csv"
+
     # Get Covid data
     covid_df = process_corona(spark, covid_column, covid_area, read_path)
 
     # Merge data for all stock markets
     result_df = None
     for market in stock_markets:
-        df = merge_by_market(spark, stock_column, market, covid_df, covid_area[1], read_path, write_path)
-        result_df = df if result_df is None else result_df.unionAll(df)
+        df = merge_by_market(spark, stock_column, market, covid_df,
+                             read_path, csv_path.replace('CSVs/all_', f'CSVs/{market}_'))
+        result_df = result_df.unionAll(df) if result_df else df
     
     # If just one stock_market, necessary CSV are already generated
     if len(stock_markets) == 1:
@@ -52,8 +56,7 @@ def merge_stocks_covid(spark, stock_column, stock_markets, covid_column, covid_a
         result_df = result_df.groupBy('Year', 'Week', covid_column).agg(F.avg(stock_column).alias(stock_column))
 
     # Write to CSV file
-    write_path = f"{write_path}/CSVs/all_{stock_column}_{covid_area[1]}.csv"
-    print(f'Writing to {write_path} ...')
-    result_df.write.csv(write_path, header=True, mode="overwrite")
+    print(f'Writing to {csv_path} ...')
+    result_df.write.csv(csv_path, header=True, mode="overwrite")
 
     print("========================================================================================")
