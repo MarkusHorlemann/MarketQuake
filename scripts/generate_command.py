@@ -20,8 +20,7 @@ def select_stock_data():
     stock_column_options = ['Volume', 'Low', 'High', 'Open', 'Close', 'Adjusted Close']
 
     # Choose number of stock markets
-    stock_market_num = get_user_choice(['one individual', 'all'],
-            "Enter how many stock markets you want to analyze.\nTo analyze all, each of them has to have already been processed individually: ")
+    stock_market_num = get_user_choice(['one individual', 'all'], "Enter how many stock markets you want to analyze: ")
 
     # Choose stock markets and metric
     if stock_market_num == 'all':
@@ -60,19 +59,19 @@ def select_covid_data():
     return covid_area, covid_column
 
 
-print(f'============ Welcome to MarketQuake! ============')
+print(f'=================== Welcome to MarketQuake! ===================')
 print("Please enter the required information for analyzing stock market and COVID-19 data.")
 print("Please, input NUMBERS and not words.")
 
 # Choose stock markets and stock column
 stock_market, stock_column = select_stock_data()
 
-# Choose economy sector
-sector_options = ['Healthcare', 'Industry', 'Industrials', 'None']
-sector = get_user_choice(sector_options, "Choose the economy sector (or 'None' if not applicable): ")
+# # Choose economy sector
+# sector_options = ['Healthcare', 'Industry', 'Industrials', 'None']
+# sector = get_user_choice(sector_options, "Choose the economy sector (or 'None' if not applicable): ")
 
 # Choose Covid area and metric
 covid_area, covid_column = select_covid_data()
 
-command = f"spark-submit main.py {stock_column} {stock_market} {covid_column} {covid_area[0]} {covid_area[1]} {sector} --py-files collect_stock_data.py merge_by_market.py merge_all.py"
+command = f"spark-submit main.py {stock_column} {stock_market} {covid_column} {covid_area[0]} {covid_area[1]} --py-files merge_by_market.py merge_all.py"
 print(f"Your PySpark command is:\n{command}")
