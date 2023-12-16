@@ -94,11 +94,9 @@ for market in stock_markets:
     print(f"Reading from {read_path} ...")
     df = pd.read_csv(list(os.popen(f'gsutil ls {read_path}/*.csv'))[0])
 
-    # Define write paths
-    market_path = f"Plots/{market}_{stock_column}.png"
-    covid_path = f"{market_path.replace('.png', '')}_{location}_{covid_column}.png"
+    # Define write path
+    plot_path = f"Plots/{market}_{stock_column}_{location}_{covid_column}.png"
 
     # Plot DataFrame
-    plot_market(df, stock_column, market_path)
-    plot_stocks_corona(df, stock_column, covid_column, covid_path)
+    plot_stocks_corona(df, stock_column, covid_column, plot_path)
     print()
