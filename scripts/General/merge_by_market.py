@@ -14,8 +14,8 @@ def process_stocks(spark, column, market_name, read_path):
     # Convert Date string to PySpark date type
     df = df.withColumn("Date", F.to_date(F.col("Date"), "dd-MM-yyy"))
 
-    # Filter data for relevant period (January 2020 to December 2022)
-    df = df.filter((F.col("Date") >= "2020-01-01") & (F.col("Date") <= "2022-12-31"))
+    # Filter data for relevant period (January 2018 to December 2022)
+    df = df.filter((F.col("Date") >= "2018-01-01") & (F.col("Date") <= "2022-12-31"))
 
     # Add 'Market' column to DataFrame
     df = df.withColumn("Market", F.lit(market_name))
@@ -40,7 +40,7 @@ def merge_by_market(spark, stock_column, stock_market, covid_df, read_path, writ
     stock_df = process_stocks(spark, stock_column, stock_market, read_path)
 
     # Merge with Covid data
-    df = stock_df.join(covid_df, ["Year", "Week"])
+    df = stock_df.join(covid_df, on=["Year", "Week"], how='leftouter')
 
     # Write to CSV file
     print(f'Writing to {write_path_final} ...')
