@@ -36,14 +36,17 @@ The results of the analysis will provide insights into stock performance, volati
 To replicate our analysis, refer to the following sections for setting up the environment, accessing the datasets, and executing the code.
 
 ### Prerequisites
-As a professor, ensure that you are using your UCM Google account to access our [Marketquake](https://console.cloud.google.com/welcome?project=marketquake) project on Google Cloud Platform. External users cannot access any resources in the project. If you think you should be granted any permission, please, contant one of the authors of this repository.
+As a professor, ensure that you are using your UCM Google account to access our [Marketquake](https://console.cloud.google.com/welcome?project=marketquake) project on Google Cloud Platform. External users cannot access any resources in the project. If you think you should be granted the permission, please, contant one of the authors of this repository.
 
 ### Data Acccess
 To access the data used for our analysis, proceed to our project's [Google Cloud Storage](https://console.cloud.google.com/storage/browser?project=marketquake).
-- **marketquake_data** bucket contains the initial data after the first and the second stage of cleansing.
-- **marketquake_analysis** bucket contains all the intermediate data needed to answer the questions abve.
-- **marketquake_results** bucket contains all the files needed to represent the final results of our study.
-Refer to our project website for details.
+The revelant directories are:
+- **marketquake_data:** contains the source data after cleansing.
+  - **stock_market_data:** contains the Stock Market dataset. Here, we also included a small CSV file with stock categorization.
+  - **covid_death_data:** contains the COVID-19 Global Excess Deaths dataset.
+- **marketquake_results:** contains all the result files needed to answer the questions of our study.
+
+Refer to our project website for more details.
 
 ### Running the Code
 TBA
