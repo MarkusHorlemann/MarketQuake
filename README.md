@@ -50,6 +50,3 @@ Refer to our project website for more details.
 
 ### Running the Code
 TBA
-
-## Results
-The results of the analysis will be documented in the /results directory. For detailed insights, visualizations, and interpretations, visit our project webpage.
