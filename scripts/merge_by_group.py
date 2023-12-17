@@ -33,7 +33,7 @@ def merge_by_group(stock_df, stock_column, stock_group, covid_df, write_path_fin
     '''Groups DataFrames for given stock market / sector by Year and Week calculating the average   
     value for stock_column. Then merges with Covid data and returns the merged DataFrame.'''
 
-   # Cleanse stock market data
+    # Cleanse stock market data
     stock_df = cleanse_stocks(stock_df, stock_column, stock_group)
 
     # Merge with Covid data

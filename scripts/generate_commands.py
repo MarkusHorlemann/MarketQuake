@@ -85,7 +85,7 @@ stock_column = get_user_choice(stock_column_options, "Choose the column in stock
 covid_area, covid_column = select_covid_data()
 
 # Choose to analyze the extremes or group in general
-how = get_user_choice(['extremes', 'general'], f"Choose to analyze the extremes or markets / sectors in general: ")
+how = get_user_choice(['general', 'extremes'], f"Choose to analyze the extremes or markets / sectors in general: ")
 
 # Choose either markets or sectors for analysis
 if how == 'extremes':
