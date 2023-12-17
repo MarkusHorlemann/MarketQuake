@@ -1,6 +1,7 @@
 import sys
 from pyspark.sql import SparkSession
 from merge_all import merge_markets_covid, merge_sectors_covid
+from extremes import find_for_market, find_for_sector
 
 DATA = "gs://marketquake_data"
 RESULTS = "gs://marketquake_results"
@@ -9,30 +10,30 @@ markets = ['sp500', 'forbes2000', 'nyse', 'nasdaq']
 sectors = ['Healthcare', 'Technology', 'Industrials']
 
 # Assign arguments
-stock_column = sys.argv[1]
+how = sys.argv[1]
+stock_column = sys.argv[2]
 
-if sys.argv[2] == 'all_markets':
+if sys.argv[3] == 'all_markets':
     stock_groups = markets
-    analyze = merge_markets_covid
-elif sys.argv[2] == 'all_sectors':
+    analyze = merge_markets_covid if how == 'general' else find_for_market
+elif sys.argv[3] == 'all_sectors':
     stock_groups = sectors
-    analyze = merge_sectors_covid
+    analyze = merge_sectors_covid if how == 'general' else find_for_sector
 else:
-    stock_groups = [sys.argv[2]]
-    if sys.argv[2] in markets:
-        analyze = merge_markets_covid
-    elif sys.argv[2] in sectors:
-        analyze = merge_sectors_covid
+    stock_groups = [sys.argv[3]]
+    if sys.argv[3] in markets:
+        analyze = merge_markets_covid if how == 'general' else find_for_market
+    elif sys.argv[3] in sectors:
+        analyze = merge_sectors_covid if how == 'general' else find_for_sector
     else:
-        raise Exception(f"Invalid stock group argument: {sys.argv[2]}")
+        raise Exception(f"Invalid stock group argument: {sys.argv[3]}")
     
-
-covid_column = sys.argv[3]
-covid_area = (sys.argv[4], sys.argv[5])
+covid_column = sys.argv[4]
+covid_area = (sys.argv[5], sys.argv[6])
 
 # Print arguments
 print("========================================================================================")
-print(f"Received arguments:\n\tstock_column={stock_column},\n\tstock_groups={stock_groups},\n\tcovid_column={covid_column},\n\tcovid_area={covid_area}")
+print(f"Received arguments:\n\thow={how},\n\tstock_column={stock_column},\n\tstock_groups={stock_groups},\n\tcovid_column={covid_column},\n\tcovid_area={covid_area}")
 print("========================================================================================")
 
 # Initialize Spark session

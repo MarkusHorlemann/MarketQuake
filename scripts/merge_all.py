@@ -31,7 +31,7 @@ def merge_markets_covid(spark, stock_column, stock_markets, covid_column, covid_
     print("========================================================================================")
 
     # Define path to write CSVs
-    csv_path = f"{write_path}/CSVs/all_{stock_column}_{covid_area[1]}_{covid_column}.csv"
+    csv_path = f"{write_path}/CSVs/general/all_{stock_column}_{covid_area[1]}_{covid_column}.csv"
 
     # Get Covid data
     covid_df = process_corona(spark, covid_column, covid_area, read_path)
@@ -42,7 +42,7 @@ def merge_markets_covid(spark, stock_column, stock_markets, covid_column, covid_
         df = spark.read.csv(f"{read_path}/stock_market_data/{market}/", header=True, inferSchema=True)
 
         # Merge with Corona data
-        df = merge_by_group(df, stock_column, market, covid_df, csv_path.replace('CSVs/all_', f'CSVs/{market}_'))
+        df = merge_by_group(df, stock_column, market, covid_df, csv_path.replace('general/all_', f'general/{market}_'))
         
         # Merge with other stock markets
         result_df = result_df.unionAll(df) if result_df else df
@@ -97,7 +97,7 @@ def merge_sectors_covid(spark, stock_column, sectors, covid_column, covid_area, 
             filter_df = filter_df.subtract(df.select("Name"))
 
         # Merge with Corona data
-        csv_path = f"{write_path}/CSVs/{sector}_{stock_column}_{covid_area[1]}_{covid_column}.csv"
+        csv_path = f"{write_path}/CSVs/general/{sector}_{stock_column}_{covid_area[1]}_{covid_column}.csv"
         result_df = merge_by_group(result_df, stock_column, sector, covid_df, csv_path)
 
     print("========================================================================================")
