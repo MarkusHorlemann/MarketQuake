@@ -1,7 +1,7 @@
 import sys
 from pyspark.sql import SparkSession
 from merge_all import merge_markets_covid, merge_sectors_covid
-from extremes import find_for_market, find_for_sector
+from extremes import find_for_market
 
 DATA = "gs://marketquake_data"
 RESULTS = "gs://marketquake_results"
@@ -18,13 +18,13 @@ if sys.argv[3] == 'all_markets':
     analyze = merge_markets_covid if how == 'general' else find_for_market
 elif sys.argv[3] == 'all_sectors':
     stock_groups = sectors
-    analyze = merge_sectors_covid if how == 'general' else find_for_sector
+    analyze = merge_sectors_covid
 else:
     stock_groups = [sys.argv[3]]
     if sys.argv[3] in markets:
         analyze = merge_markets_covid if how == 'general' else find_for_market
     elif sys.argv[3] in sectors:
-        analyze = merge_sectors_covid if how == 'general' else find_for_sector
+        analyze = merge_sectors_covid
     else:
         raise Exception(f"Invalid stock group argument: {sys.argv[3]}")
     

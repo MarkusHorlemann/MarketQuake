@@ -84,22 +84,26 @@ stock_column = get_user_choice(stock_column_options, "Choose the column in stock
 # Choose Covid area and metric
 covid_area, covid_column = select_covid_data()
 
+# Choose to analyze the extremes or group in general
+how = get_user_choice(['extremes', 'general'], f"Choose to analyze the extremes or markets / sectors in general: ")
+
 # Choose either markets or sectors for analysis
-group = get_user_choice(['markets', 'sectors'], "Choose to analyze stocks by markets or by sectors: ")
-if group == 'markets':
+if how == 'extremes':
     group = select_market()
 else:
-    group = select_sector()
-
-# Choose to analyze the extremes or group in general
-how = get_user_choice(['extremes', 'general'], f"Choose to analyze the extremes or {group} in general: ")
+    group = get_user_choice(['markets', 'sectors'], "Choose to analyze stocks by markets or by sectors: ")
+    if group == 'markets':
+        group = select_market()
+    else:
+        group = select_sector()
 
 # Generate PySpark command
 command = f"spark-submit main.py {how} {stock_column} {group} {covid_column} {covid_area[0]} {covid_area[1]} --py-files merge_by_group.py merge_all.py"
 print(f"\nYour PySpark command is:\n{command}")
 
 # Generate plotting command
-command = f"python plot.py {how} {stock_column} {group} {covid_column} {covid_area[1]}"
-print(f"\nYour plotting command is:\n{command}")
+if how == 'general':
+    command = f"python plot.py {stock_column} {group} {covid_column} {covid_area[1]}"
+    print(f"\nYour plotting command is:\n{command}")
 
 print()

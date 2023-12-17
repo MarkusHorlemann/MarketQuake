@@ -4,7 +4,7 @@ from merge_by_group import merge_by_group
 
 def process_corona(spark, column, area, read_path):
     '''Filters Covid data by chosen area and groups by Year and Week.'''
-    print(f'Filtering and grouping Covid data...')
+    print(f'\nFiltering and grouping Covid data...')
     
     # Read the CSV file into a DataFrame with header and schema inferred
     division = area[0]

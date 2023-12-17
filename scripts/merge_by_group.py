@@ -1,8 +1,8 @@
 from pyspark.sql import functions as F
 
 
-def process_stocks(df, column, group):
-    '''Filters DataFrame for particular group by relevant dates and groups by Year and Week.'''
+def cleanse_stocks(df, column, group):
+    '''Filters DataFrame for particular group by relevant dates, adds columns by Year and Week.'''
     print(f'\nCleansing data for stocks in {group}...')
 
     # Only select necessary columns
@@ -24,7 +24,7 @@ def process_stocks(df, column, group):
         df = df.groupBy("Group", "Year", "Week").agg(F.sum(column).alias(column))
     else:
         df = df.groupBy("Group", "Year", "Week").agg(F.avg(column).alias(column))
-    
+   
     # Remove columns with null values in any row
     return df.na.drop()
 
@@ -33,8 +33,8 @@ def merge_by_group(stock_df, stock_column, stock_group, covid_df, write_path_fin
     '''Groups DataFrames for given stock market / sector by Year and Week calculating the average   
     value for stock_column. Then merges with Covid data and returns the merged DataFrame.'''
 
-    # Get stock market data
-    stock_df = process_stocks(stock_df, stock_column, stock_group)
+   # Cleanse stock market data
+    stock_df = cleanse_stocks(stock_df, stock_column, stock_group)
 
     # Merge with Covid data
     df = stock_df.join(covid_df, on=["Year", "Week"], how='leftouter')
