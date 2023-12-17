@@ -2,8 +2,9 @@ from merge_all import process_corona
 from pyspark.sql import functions as F
 from pyspark.sql.window import Window
 
+
 def calculate_extremes(df, column, group):
-    '''Computes the weekly return by taking the ratio of the weekly day's price to the previous week's 
+    '''Computes the weekly return by taking the ratio of the weekly day's price to the previous week's
     price and subtracting 1. The highest performing stock is the one having the largest total return.
     Returns the lowest and the highest performing stock.'''
     # Step 1: Calculate weekly returns
@@ -65,7 +66,7 @@ def find_for_market(spark, stock_column, stock_markets, covid_column, covid_area
         # Read all stock files in market into one DataFrame
         print(f"\nReading stock files for {market}...")
         df = spark.read.csv(f"{read_path}/stock_market_data/{market}/", header=True, inferSchema=True)
-        
+
         # Cleanse and group stocks by Name, Year and Week
         df = cleanse_stocks(df, stock_column, market)
 
@@ -79,16 +80,16 @@ def find_for_market(spark, stock_column, stock_markets, covid_column, covid_area
         if result_df is None:
             result_df = df.filter(F.col("Name").isin(name_filter))
             continue
-        
+
         if result_df.filter(F.col("Name") == worst).count() > 0:
             name_filter.remove(worst)
         if result_df.filter(F.col("Name") == best).count() > 0:
             name_filter.remove(best)
-        
+
         result_df = result_df.unionAll(df.filter(F.col("Name").isin(name_filter)))
 
     # If all stock markets, find extremes
-    if len(stock_markets) != 1: 
+    if len(stock_markets) != 1:
         worst, best = calculate_extremes(result_df, stock_column, 'all markets')
         result_df = result_df.filter(F.col("Name").isin(worst, best))
 
