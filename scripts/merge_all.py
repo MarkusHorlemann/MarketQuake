@@ -1,4 +1,3 @@
-import os
 from pyspark.sql import functions as F
 from merge_by_group import merge_by_group
 
