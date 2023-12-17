@@ -13,26 +13,6 @@ def get_user_choice(options, prompt):
             print("Invalid choice. Please try again.")
 
 
-def select_stock_data():
-    '''Lets the user choose the stock markets to analyze and the metric (column) to analyze them with.'''
-    # Provide options for user choice
-    stock_market_options = ['sp500', 'forbes2000', 'nyse', 'nasdaq']
-    stock_column_options = ['Volume', 'Low', 'High', 'Open', 'Close', 'AdjustedClose']
-
-    # Choose number of stock markets
-    stock_market_num = get_user_choice(['one individual', 'all'], "Enter how many stock markets you want to analyze: ")
-
-    # Choose stock markets and metric
-    if stock_market_num == 'all':
-        stock_market = 'all'
-    else:
-        stock_market = get_user_choice(stock_market_options, f"Enter the name of the stock market: ")
-
-    # Choose metric (column)
-    stock_column = get_user_choice(stock_column_options, "Choose the column in stock data you want to analyze: ")
-    return stock_market, stock_column
-
-
 def select_covid_data():
     '''Lets the user choose the area and metric (column) to analyze Covid data with.'''
     # Provide options for user choice
@@ -59,24 +39,64 @@ def select_covid_data():
     return covid_area, covid_column
 
 
+def select_market():
+    '''Lets the user choose the stock markets to analyze.'''
+    # Provide options for user choice
+    stock_market_options = ['sp500', 'forbes2000', 'nyse', 'nasdaq']
+    
+    # Choose number of stock markets
+    stock_market_num = get_user_choice(['one individual', 'all'], "Enter how many stock markets you want to analyze: ")
+
+    # Choose stock markets and metric
+    if stock_market_num == 'all':
+        stock_market = 'all_markets'
+    else:
+        stock_market = get_user_choice(stock_market_options, f"Enter the name of the stock market: ")
+
+    return stock_market
+
+
+def select_sector():
+    '''Lets the user choose the economy sectors to analyze.'''
+    # Provide options for user choice
+    sector_options = ['Healthcare', 'Technology', 'Industrials']
+
+    # Choose number of economy sectors
+    sectors_num = get_user_choice(['one individual', 'all'], "Enter how many economy sectors you want to analyze: ")
+
+    # Choose sectors and metric
+    if sectors_num == 'all':
+        sector = 'all_sectors'
+    else:
+        sector = get_user_choice(sector_options, f"Enter the name of the sector: ")
+    
+    return sector
+
+
 print(f'=================== Welcome to MarketQuake! ===================')
 print("Please enter the required information for analyzing stock market and COVID-19 data.")
 print("Please, input NUMBERS and not words.")
 
-# Choose stock markets and stock column
-stock_market, stock_column = select_stock_data()
-
-# # Choose economy sector
-# sector_options = ['Healthcare', 'Industry', 'Industrials', 'None']
-# sector = get_user_choice(sector_options, "Choose the economy sector (or 'None' if not applicable): ")
+# Choose stock metric (column)
+stock_column_options = ['Volume', 'Low', 'High', 'Open', 'Close', 'AdjustedClose']
+stock_column = get_user_choice(stock_column_options, "Choose the column in stock data you want to analyze: ")
 
 # Choose Covid area and metric
 covid_area, covid_column = select_covid_data()
 
+# Choose either markets or sectors for analysis
+group = get_user_choice(['markets', 'sectors'], "Enter if you want to analyze stocks by markets or by sectors: ")
+if group == 'markets':
+    group = select_market()
+else:
+    group = select_sector()
+
 # Generate PySpark command
-command = f"spark-submit main.py {stock_column} {stock_market} {covid_column} {covid_area[0]} {covid_area[1]} --py-files merge_by_market.py merge_all.py"
+command = f"spark-submit main.py {stock_column} {group} {covid_column} {covid_area[0]} {covid_area[1]} --py-files merge_by_group.py merge_all.py"
 print(f"\nYour PySpark command is:\n{command}")
 
 # Generate plotting command
-command = f"python plot.py {stock_column} {stock_market} {covid_column} {covid_area[1]}"
+command = f"python plot.py {stock_column} {group} {covid_column} {covid_area[1]}"
 print(f"\nYour plotting command is:\n{command}")
+
+print()

@@ -1,5 +1,6 @@
+import os
 from pyspark.sql import functions as F
-from merge_by_market import merge_by_market
+from merge_by_group import merge_by_group
 
 
 def process_corona(spark, column, area, read_path):
@@ -26,7 +27,7 @@ def process_corona(spark, column, area, read_path):
     return df.groupBy(df.columns[0], "Year", "Week").agg(F.avg(F.col(column)).alias(column))
 
 
-def merge_stocks_covid(spark, stock_column, stock_markets, covid_column, covid_area, read_path, write_path):
+def merge_markets_covid(spark, stock_column, stock_markets, covid_column, covid_area, read_path, write_path):
     '''Reads and merges Covid and stock market data in chosen markets altogether.'''
     print("========================================================================================")
 
@@ -36,18 +37,22 @@ def merge_stocks_covid(spark, stock_column, stock_markets, covid_column, covid_a
     # Get Covid data
     covid_df = process_corona(spark, covid_column, covid_area, read_path)
 
-    # Merge data for all stock markets
     result_df = None
     for market in stock_markets:
-        df = merge_by_market(spark, stock_column, market, covid_df,
-                             read_path, csv_path.replace('CSVs/all_', f'CSVs/{market}_'))
+        # Read all stock files in market into one DataFrame
+        df = spark.read.csv(f"{read_path}/stock_market_data/{market}/", header=True, inferSchema=True)
+
+        # Merge with Corona data
+        df = merge_by_group(df, stock_column, market, covid_df, csv_path.replace('CSVs/all_', f'CSVs/{market}_'))
+        
+        # Merge with other stock markets
         result_df = result_df.unionAll(df) if result_df else df
     
     # If just one stock_market, necessary CSV are already generated
     if len(stock_markets) == 1:
         return
 
-    print('Merging all Covid and stock market data...')
+    print('\nMerging all Covid and stock market data...')
 
     # Group by Year, Week and covid_column
     if stock_column == 'Volume':
@@ -58,5 +63,42 @@ def merge_stocks_covid(spark, stock_column, stock_markets, covid_column, covid_a
     # Write to CSV file
     print(f'Writing to {csv_path} ...')
     result_df.write.csv(csv_path, header=True, mode="overwrite")
+
+    print("========================================================================================")
+
+
+def merge_sectors_covid(spark, stock_column, sectors, covid_column, covid_area, read_path, write_path):
+    '''Reads and merges Covid and stock data in individual sectors.'''
+    print("========================================================================================")
+    
+    # Get Covid data
+    covid_df = process_corona(spark, covid_column, covid_area, read_path)
+
+    # Read categorized stocks file
+    print("Reading and filtering stock data for each market...")
+    sectors_df = spark.read.csv(f"{read_path}/categorized_stocks.csv", header=True, inferSchema=True)
+
+    # Read stock files in each market
+    stock_dfs = [spark.read.csv(f"{read_path}/stock_market_data/{market}/", header=True, inferSchema=True)
+                 for market in ['sp500', 'forbes2000', 'nyse', 'nasdaq']]
+
+    for sector in sectors:
+        # Filter sectors DataFrame by sector
+        filter_df = sectors_df.filter(sectors_df['Category'] == sector).select("Name")
+
+        result_df = None
+        for df in stock_dfs:
+            # Filter stock DataFrame by sector
+            df = df.join(filter_df, on=['Name'])
+
+            # Merge with other stock markets
+            result_df = result_df.unionAll(df) if result_df else df
+
+            # Remove used stock names to avoid duplicates
+            filter_df = filter_df.subtract(df.select("Name"))
+
+        # Merge with Corona data
+        csv_path = f"{write_path}/CSVs/{sector}_{stock_column}_{covid_area[1]}_{covid_column}.csv"
+        result_df = merge_by_group(result_df, stock_column, sector, covid_df, csv_path)
 
     print("========================================================================================")
