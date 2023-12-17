@@ -1,5 +1,6 @@
 '''Generates PySpark command to execute in Cloud based on user input.'''
 
+
 def get_user_choice(options, prompt):
     '''Presents the choice options and ask user to select one.'''
     while True:
@@ -8,7 +9,7 @@ def get_user_choice(options, prompt):
 
         choice = input(prompt)
         if choice.isdigit() and 1 <= int(choice) <= len(options):
-            return options[int(choice)-1]
+            return options[int(choice) - 1]
         else:
             print("Invalid choice. Please try again.")
 
@@ -43,7 +44,7 @@ def select_market():
     '''Lets the user choose the stock markets to analyze.'''
     # Provide options for user choice
     stock_market_options = ['sp500', 'forbes2000', 'nyse', 'nasdaq']
-    
+
     # Choose number of stock markets
     stock_market_num = get_user_choice(['one individual', 'all'], "Enter how many stock markets you want to analyze: ")
 
@@ -69,7 +70,7 @@ def select_sector():
         sector = 'all_sectors'
     else:
         sector = get_user_choice(sector_options, f"Enter the name of the sector: ")
-    
+
     return sector
 
 
@@ -84,26 +85,22 @@ stock_column = get_user_choice(stock_column_options, "Choose the column in stock
 # Choose Covid area and metric
 covid_area, covid_column = select_covid_data()
 
-# Choose to analyze the extremes or group in general
-how = get_user_choice(['general', 'extremes'], f"Choose to analyze the extremes or markets / sectors in general: ")
-
 # Choose either markets or sectors for analysis
-if how == 'extremes':
+group = get_user_choice(['markets', 'sectors'], "Choose to analyze stocks by markets or by sectors: ")
+if group == 'markets':
     group = select_market()
 else:
-    group = get_user_choice(['markets', 'sectors'], "Choose to analyze stocks by markets or by sectors: ")
-    if group == 'markets':
-        group = select_market()
-    else:
-        group = select_sector()
+    group = select_sector()
+
+# Choose to analyze the extremes or group in general
+how = get_user_choice(['extremes', 'general'], f"Choose to analyze the extremes or {group} in general: ")
 
 # Generate PySpark command
 command = f"spark-submit main.py {how} {stock_column} {group} {covid_column} {covid_area[0]} {covid_area[1]} --py-files merge_by_group.py merge_all.py"
 print(f"\nYour PySpark command is:\n{command}")
 
 # Generate plotting command
-if how == 'general':
-    command = f"python plot.py {stock_column} {group} {covid_column} {covid_area[1]}"
-    print(f"\nYour plotting command is:\n{command}")
+command = f"python plot.py {how} {stock_column} {group} {covid_column} {covid_area[1]}"
+print(f"\nYour plotting command is:\n{command}")
 
 print()

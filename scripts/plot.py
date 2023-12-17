@@ -2,8 +2,10 @@ import sys, os
 import pandas as pd
 import matplotlib.pyplot as plt
 from google.cloud import storage
+from resource_monitoring import plot_resource_usage
 
 RESULTS = "gs://marketquake_results"
+
 
 def plot_market(df, column, write_path):
     '''Plots the development of chosen column for particular stock market.'''
@@ -19,7 +21,7 @@ def plot_market(df, column, write_path):
     plt.figure(figsize=(14, 7))
     plt.plot(df['Date'], df[column], marker='o')
     plt.title("Stock Prices Over Time")
-    
+
     plt.xlabel('Date')
     plt.ylabel('Data Value')
     plt.grid(True)
@@ -79,35 +81,39 @@ def plot_stocks_corona(df, stock_column, covid_column, write_path):
     blob.upload_from_filename('plot.png')
 
 
-# Assign argumetns
-stock_column = sys.argv[1]
-if sys.argv[2] == 'all_markets':
+# Assign arguments
+how = sys.argv[1]
+stock_column = sys.argv[2]
+if sys.argv[3] == 'all_markets':
     stock_groups = ['sp500', 'forbes2000', 'nyse', 'nasdaq', 'all']
-elif sys.argv[2] == 'all_sectors':
+elif sys.argv[3] == 'all_sectors':
     stock_groups = ['Healthcare', 'Technology', 'Industrials']
 else:
-    stock_groups = [sys.argv[2]]
-covid_column = sys.argv[3]
-location = sys.argv[4]
+    stock_groups = [sys.argv[3]]
+covid_column = sys.argv[4]
+location = sys.argv[5]
 
 # Print arguments
 print("========================================================================================")
-print(f"Received arguments:\n\tstock_column={stock_column},\n\tstock_groups={stock_groups},\n\tcovid_column={covid_column},\n\tlocation={location}")
+print(
+    f"Received arguments:\n\thow={how},\n\tstock_column={stock_column},\n\tstock_groups={stock_groups},\n\tcovid_column={covid_column},\n\tlocation={location}")
 print("========================================================================================")
-
 
 for group in stock_groups:
     # Define common file name
     name = f"{group}_{stock_column}_{location}_{covid_column}"
 
     # Define read path and read CSV
-    read_path = f"{RESULTS}/CSVs/general/{name}.csv"
+    read_path = f"{RESULTS}/CSVs/{how}/{name}.csv"
     print(f"Reading from {read_path} ...")
     df = pd.read_csv(list(os.popen(f'gsutil ls {read_path}/*.csv'))[0])
 
     # Define write path
-    plot_path = f"Plots/general/{name}.png"
+    plot_path = f"Plots/{how}/{name}.png"
 
     # Plot DataFrame
     plot_stocks_corona(df, stock_column, covid_column, plot_path)
-    print()
+
+
+
+

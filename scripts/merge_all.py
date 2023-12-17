@@ -4,8 +4,8 @@ from merge_by_group import merge_by_group
 
 def process_corona(spark, column, area, read_path):
     '''Filters Covid data by chosen area and groups by Year and Week.'''
-    print(f'\nFiltering and grouping Covid data...')
-    
+    print(f'Filtering and grouping Covid data...')
+
     # Read the CSV file into a DataFrame with header and schema inferred
     division = area[0]
     location = area[1]
@@ -43,10 +43,10 @@ def merge_markets_covid(spark, stock_column, stock_markets, covid_column, covid_
 
         # Merge with Corona data
         df = merge_by_group(df, stock_column, market, covid_df, csv_path.replace('general/all_', f'general/{market}_'))
-        
+
         # Merge with other stock markets
         result_df = result_df.unionAll(df) if result_df else df
-    
+
     # If just one stock_market, necessary CSV are already generated
     if len(stock_markets) == 1:
         return
@@ -69,7 +69,7 @@ def merge_markets_covid(spark, stock_column, stock_markets, covid_column, covid_
 def merge_sectors_covid(spark, stock_column, sectors, covid_column, covid_area, read_path, write_path):
     '''Reads and merges Covid and stock data in individual sectors.'''
     print("========================================================================================")
-    
+
     # Get Covid data
     covid_df = process_corona(spark, covid_column, covid_area, read_path)
 
