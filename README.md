@@ -18,7 +18,7 @@ Our project aims to investigate the impact of the COVID-19 crisis on the world's
 6. Which sectors were most and least affected by the Coronavirus crisis? Did any sectors experience growth during the pandemic?
 7. What conclusions and forecasts can be made about crisis management in different companies?
 
-The results of the analysis will provide insights into stock performance, volatility, and potential investment strategies, contributing to the understanding of the economic implications of the global health crisis.
+The [results](https://sites.google.com/ucm.es/marketquake/results/evaluation) of the analysis will provide insights into stock performance, volatility, and potential investment strategies, contributing to the understanding of the economic implications of the global health crisis.
 
 ## Description of the Data
 
@@ -45,6 +45,10 @@ The revelant directories are:
   - **stock_market_data:** contains the Stock Market dataset. Here, we also included a small CSV file with stock categorization.
   - **covid_death_data:** contains the COVID-19 Global Excess Deaths dataset.
 - **marketquake_results:** contains all the result files needed to answer the questions of our study.
+  - **Plots:** contains the results of our study in the form of graphs in PNG.
+  - **CSVs:** contains the results of our study in the CSV table format.
+    - **extremes:** contains the results of our study concerning extreme-performing stocks.
+    - **general:** contains the results of our study concerning the analysis of markets and sectors in general.
 
 Refer to our project [website](https://sites.google.com/ucm.es/marketquake) for more details.
 
